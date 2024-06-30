@@ -1,5 +1,5 @@
 
-# MS365 PowerShell Script
+# GERENCIAMENTO DE LICENÇAS VIA POWERSHELL
 
 ## Descrição
 Este repositório contém um script PowerShell para automação de tarefas no Microsoft 365. O script facilita a administração e o gerenciamento dos serviços Microsoft 365, oferecendo uma solução eficiente e prática para administradores de TI.
