@@ -54,7 +54,6 @@ function Show-WelcomeScreen {
     Write-Host "Visite nosso site: www.jornada365.cloud" -ForegroundColor Cyan
     Write-Host "Microsoft 365: admin.microsoft.com" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Criado 100% pelo ChatGPT" -ForegroundColor Cyan
     Write-Host "SEJA BEM-VINDO || JORNADA 365" -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
 }
