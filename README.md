@@ -19,7 +19,7 @@ O script foi criado para atender a diversas necessidades administrativas dentro 
 - **Gerenciamento de licenças:** Facilita o gerenciamento de licenças, quando é necessário atribuir dezenas ou centenas de licenças.
 - **Informações em Tela** Durante a remoção ou aplicação das licenças, é sempre informado quais contas foram aplicadas/removidas o licenciamento, se houve falha ou sucesso na aplicação.
 - **Instalação de Modulos facilitado:** O Script faz tudo para você, verifica se o modulo esta instalado e também atualiza se houver necessidade.
-- **Cria um arquivo csv de exemplo:** Para gerenciar as licenaçs é necessário ter um arquivo csv com 1 coluna Email e as contas de todos que serão atribuidas ou removidas as licenças. O script cria um arquivo de exemplo para facilitar o uso. O arquivo é criado na pasta C:\MS365.
+- **Cria um arquivo csv de exemplo:** Para gerenciar as licenças, é necessário possuir um arquivo CSV contendo uma coluna chamada "Email", onde estarão listadas todas as contas que receberão ou terão suas licenças removidas. Para facilitar o uso, o script cria um arquivo de exemplo, que é salvo na pasta C:\MS365.
 
 ## Requisitos
 Para utilizar o script, você precisar dos seguintes requisitos:
