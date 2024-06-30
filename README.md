@@ -45,7 +45,7 @@ Siga os passos abaixos para utilizar o script. Abra o Powershell como Adminsitra
    ```
 
 ## Sobre
-Este projeto foi desenvolvido por [Sérgio Sant'Ana Júnior](https://jornada365.cloud) para a Jornada 365. Para mais informações e outros projetos, visite nosso [site](https://jornada365.cloud).
+Este projeto foi desenvolvido por [Sérgio Sant'Ana Júnior](https://www.linkedin.com/in/sergiosantanacloud/) para a Jornada 365. Para mais informações e outros projetos, visite nosso [site](https://jornada365.cloud).
 
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e enviar pull requests. Se você encontrar um problema ou tiver uma sugestão de melhoria, não hesite em nos contatar.
