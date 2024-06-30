@@ -4,7 +4,7 @@
 ## Descrição
 Este repositório contém um script PowerShell para automação de tarefas no Microsoft 365. O script facilita a administração e o gerenciamento dos serviços Microsoft 365, oferecendo uma solução eficiente e prática para administradores de TI.
 
-https://github.com/sesantanajr/ms365-script/blob/main/Walpapper%204.png
+![Logo Jornada 365](https://github.com/sesantanajr/ms365-script/blob/main/Walpapper%204.png)
 
 ## Propósito
 O script foi criado para atender a diversas necessidades administrativas dentro do ambiente Microsoft 365, incluindo:
