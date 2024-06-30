@@ -5,43 +5,43 @@
 Este repositório contém um script PowerShell para automação de tarefas no Microsoft 365. O script facilita a administração e o gerenciamento dos serviços Microsoft 365, oferecendo uma solução eficiente e prática para administradores de TI.
 
 ## Propósito
-O script foi criado para atender a diversas necessidades administrativas dentro do ambiente Microsoft 365, incluindo, mas não se limitando a:
+O script foi criado para atender a diversas necessidades administrativas dentro do ambiente Microsoft 365, incluindo:
 
-- Gerenciamento de usuários e grupos
-- Relatórios detalhados de uso e atividade
-- Integração com outras ferramentas de administratio
-
+- Gerenciamento de Licenças Microsoft 365
+- Instalação/Atualização do modulo Microsoft Graph e dependências
 - Automatização de tarefas rotineiras, permitindo que os administradores de TI.
 
 
 ## Funcionalidades
-- **Automatização de Tarefas Administrativas:** Reduz o tempo e o esfosso necessários para realizar tarefas repetitivas.
-- **Gerenciamento de Usuários e Grupos:** Facilita a criação, atualização e remoção de usuários e grupos.
-- **Relatórios Detalhados:** Gera relatórios sobre os usée e a atividade dentro do ambiente Microsoft 365.
-- **Integração:** Possibilidade de integração com outras ferramentas e scripts para uma administração mais abrangente.
+- **Automatização de Tarefas Administrativas:** Reduz o tempo e o esforço necessários para realizar tarefas repetitivas.
+- **Gerenciamento de licenças:** Facilita o gerenciamento de licenças, quando é necessário atribuir dezenas ou centenas de licenças.
+- **Informações em Tela** Durante a remoção ou aplicação das licenças, é sempre informado quais contas foram aplicadas/removidas o licenciamento, se houve falha ou sucesso na aplicação.
+- **Instalação de Modulos facilitado:** O Script faz tudo para você, verifica se o modulo esta instalado e também atualiza se houver necessidade.
+- **Cria um arquivo csv de exemplo:** Para gerenciar as licenaçs é necessário ter um arquivo csv com 1 coluna Email e as contas de todos que serão atribuidas ou removidas as licenças. O script cria um arquivo de exemplo para facilitar o uso. O arquivo é criado na pasta C:\MS365.
 
 ## Requisitos
 Para utilizar o script, você precisar dos seguintes requisitos:
 - **PowerShell 5.1 ou superior**
 - **Permissões de administrador no Microsoft 365**
-- **Módulos do PowerShell para Microsoft 365 instalados
+- **O script cria uma pasta no diretório C:\MS365**
 
 ## Como Usar
-Siga os passos abaixos para utilizar o script:
+Siga os passos abaixos para utilizar o script. Abra o Powershell como Adminsitrado:
 
 1. **Clone este repositório:**
    ```sh
+   cd  ~\Downloads\
    git clone https://github.com/sesantanajr/ms365-script.git
    ```
 
 2. **Navegue até o diretório do script**
-   ``hshsh
+   ```sh
    cd ms365-script
    ```
 
 3. **Execute o script:*
    ```sh
-   ./ms365.ps1
+   powershell -ExecutionPolicy Bypass -File .\ms365.ps1
    ```
 
 ## Sobre
@@ -50,5 +50,4 @@ Este projeto foi desenvolvido por [Sérgio Sant'Ana Júnior](https://jornada365.
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e enviar pull requests. Se você encontrar um problema ou tiver uma sugestão de melhoria, não hesite em nos contatar.
 
-## Licença
-Este projeto está licenciado sob a licença MIT. Consulte o arquivo LICENSE para mais informações.
+**Jornada 365 - Sua Jornada Começa Aqui**
