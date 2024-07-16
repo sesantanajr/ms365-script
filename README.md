@@ -21,6 +21,7 @@ O script foi criado para atender a diversas necessidades administrativas dentro 
 - **Informações em Tela** Durante a remoção ou aplicação das licenças, é sempre informado quais contas foram aplicadas/removidas o licenciamento, se houve falha ou sucesso na aplicação.
 - **Instalação de Modulos facilitado:** O Script faz tudo para você, verifica se o modulo esta instalado e também atualiza se houver necessidade.
 - **Cria um arquivo csv de exemplo:** Para gerenciar as licenças, é necessário possuir um arquivo CSV contendo uma coluna chamada "Email", onde estarão listadas todas as contas que receberão ou terão suas licenças removidas. Para facilitar o uso, o script cria um arquivo de exemplo, que é salvo na pasta C:\MS365.
+- **Configura Localidade:** O script obtém todos os usuários do tenant ou importa de um arquivo csv e define a localidade selecionada.
 
 ## Requisitos
 Para utilizar o script, você precisar dos seguintes requisitos:
