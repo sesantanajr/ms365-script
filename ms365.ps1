@@ -79,13 +79,13 @@ function Check-Install-Modules {
     $moduleName = "Microsoft.Graph"
     try {
         if (-not (Get-Module -Name $moduleName -ListAvailable)) {
-            Write-Host "Módulo $moduleName não encontrado. Tentando instalar..." -ForegroundColor Yellow
+            Write-Host "Modulo $moduleName nao encontrado. Tentando instalar..." -ForegroundColor Yellow
             Install-Module -Name $moduleName -Scope CurrentUser -Force -ErrorAction Stop
         } else {
-            Write-Host "Módulo $moduleName já está instalado." -ForegroundColor Green
+            Write-Host "Modulo $moduleName ja esta instalado." -ForegroundColor Green
         }
     } catch {
-        $errorMessage = "Erro ao instalar/atualizar o módulo ${moduleName}: $($_.Exception.Message)"
+        $errorMessage = "Erro ao instalar/atualizar o modulo ${moduleName}: $($_.Exception.Message)"
         Write-Host $errorMessage -ForegroundColor Red
         Log-Error $errorMessage
     }
@@ -95,19 +95,24 @@ function Check-Install-Modules {
 function Show-WelcomeScreen {
     Clear-Host
     Write-Host "===========================================" -ForegroundColor Green
+    Write-Host "                                         " -ForegroundColor Green
     Write-Host "              JORNADA365                  " -ForegroundColor Green
     Write-Host "            Sua Jornada Comeca Aqui       " -ForegroundColor Green
+    Write-Host "                                         " -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
+    Write-Host "                                         " -ForegroundColor Yellow
     Write-Host "Este script foi criado para simplificar o gerenciamento de licencas no Microsoft 365." -ForegroundColor Yellow
+    Write-Host "                                         " -ForegroundColor Yellow
     Write-Host "Gerenciar licencas e uma tarefa facil quando se trata de poucas licencas ou mesmo" -ForegroundColor Yellow
     Write-Host "algumas dezenas de usuarios. No entanto, ao remover ou substituir licencas para" -ForegroundColor Yellow
     Write-Host "centenas de usuarios, o processo se torna muito mais complexo." -ForegroundColor Yellow
     Write-Host "Por isso, utilize este script com cautela e sinta-se a vontade para compartilha-lo." -ForegroundColor Yellow
-    Write-Host ""
+    Write-Host "                                         " -ForegroundColor Yellow
     Write-Host "Visite nosso site: www.jornada365.cloud" -ForegroundColor Cyan
     Write-Host "Microsoft 365: admin.microsoft.com" -ForegroundColor Cyan
-    Write-Host ""
+    Write-Host "                                         " -ForegroundColor Cyan
     Write-Host "SEJA BEM-VINDO || JORNADA 365" -ForegroundColor Green
+    Write-Host "                                         " -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
 }
 
@@ -558,6 +563,7 @@ function Remove-AllLicenses {
 
 # Funcao para mostrar o menu
 function Show-Menu {
+    Write-Host " " -ForegroundColor Cyan
     Write-Host "Selecione uma opcao:" -ForegroundColor Cyan
     Write-Host "1 - Adicionar Licencas" -ForegroundColor Yellow
     Write-Host "2 - Adicionar e Remover Licencas" -ForegroundColor Yellow
@@ -566,6 +572,7 @@ function Show-Menu {
     Write-Host "5 - Definir Localidade Padrao para Todos os Usuarios" -ForegroundColor Yellow
     Write-Host "6 - Importar CSV e Definir Localidade" -ForegroundColor Yellow
     Write-Host "0 - Sair" -ForegroundColor Yellow
+    Write-Host " " -ForegroundColor Yellow
     [int]$choice = Read-Host "Escolha uma opcao"
     return $choice
 }
@@ -608,7 +615,7 @@ function Main {
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):"
+                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -625,7 +632,7 @@ function Main {
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):"
+                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -654,7 +661,7 @@ function Main {
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):"
+                        Write-Host "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
