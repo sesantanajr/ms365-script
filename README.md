@@ -13,6 +13,7 @@ O script foi criado para atender a diversas necessidades administrativas dentro 
 - Instalação/Atualização do modulo Microsoft Graph e dependências
 - Automatização de tarefas rotineiras, permitindo que os administradores de TI.
 
+![Autenticação J365](https://github.com/sesantanajr/ms365-script/blob/main/ms365-script_login.png)
 
 ## Funcionalidades
 - **Automatização de Tarefas Administrativas:** Reduz o tempo e o esforço necessários para realizar tarefas repetitivas.
@@ -26,6 +27,8 @@ Para utilizar o script, você precisar dos seguintes requisitos:
 - **PowerShell 5.1 ou superior**
 - **Permissões de administrador no Microsoft 365**
 - **O script cria uma pasta no diretório C:\MS365**
+
+![MENU SCRIPT](https://github.com/sesantanajr/ms365-script/blob/main/ms365-script_options.png)
 
 ## Como Usar
 Siga os passos abaixos para utilizar o script. Abra o Powershell como Adminsitrado:
