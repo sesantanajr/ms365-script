@@ -1,11 +1,11 @@
-# Importa módulos necessários
+# Importa modulos necessarios
 Import-Module AzureAD
 Import-Module Microsoft.PowerShell.Management
 
-# Definir política de execução temporariamente
+# Definir politica de execucao temporariamente
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
 
-# Definir codificação do console para UTF-8
+# Definir codificacao do console para UTF-8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Criar pasta para logs
@@ -17,7 +17,7 @@ if (-Not (Test-Path -Path $logPath)) {
 # Caminho do arquivo de log
 $logFilePath = "$logPath\error_log.txt"
 
-# Função para logar erros
+# Funcao para logar erros
 function Log-Error {
     param (
         [string]$message
@@ -25,11 +25,29 @@ function Log-Error {
     Add-Content -Path $logFilePath -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $message"
 }
 
-# Função para exibir GUI de seleção de localidade
+# Funcao para exibir uma mensagem amigavel
+function Show-Message {
+    param (
+        [string]$Message,
+        [string]$Type = "Info"
+    )
+
+    if ($Type -eq "Error") {
+        Write-Host "Erro: $Message" -ForegroundColor Red
+        Log-Error $Message
+    } elseif ($Type -eq "Attention") {
+        Write-Host "Atencao: $Message" -ForegroundColor Yellow
+        Log-Error $Message
+    } else {
+        Write-Host "$Message" -ForegroundColor Green
+    }
+}
+
+# Funcao para exibir GUI de selecao de localidade
 function Select-Location {
     Add-Type -AssemblyName System.Windows.Forms
     $form = New-Object System.Windows.Forms.Form
-    $form.Text = "Selecione a Localidade Padrão"
+    $form.Text = "Selecione a Localidade Padrao"
     $form.Size = New-Object System.Drawing.Size(400, 200)
     $form.StartPosition = "CenterScreen"
 
@@ -65,7 +83,7 @@ function Select-Location {
     return $form.Tag
 }
 
-# Função para exibir GUI de seleção de arquivo CSV
+# Funcao para exibir GUI de selecao de arquivo CSV
 function Select-CSVFile {
     Add-Type -AssemblyName System.Windows.Forms
     $fileDialog = New-Object System.Windows.Forms.OpenFileDialog
@@ -74,20 +92,19 @@ function Select-CSVFile {
     return $fileDialog.FileName
 }
 
-# Função para verificar e instalar/atualizar módulo Microsoft Graph
+# Funcao para verificar e instalar/atualizar modulo Microsoft Graph
 function Check-Install-Modules {
     $moduleName = "Microsoft.Graph"
     try {
         if (-not (Get-Module -Name $moduleName -ListAvailable)) {
-            Write-Host "Modulo $moduleName nao encontrado. Tentando instalar..." -ForegroundColor Yellow
+            Show-Message "Modulo $moduleName nao encontrado. Tentando instalar..." -Type "Info"
             Install-Module -Name $moduleName -Scope CurrentUser -Force -ErrorAction Stop
         } else {
-            Write-Host "Modulo $moduleName ja esta instalado." -ForegroundColor Green
+            Show-Message "Modulo $moduleName ja esta instalado." -Type "Info"
         }
     } catch {
         $errorMessage = "Erro ao instalar/atualizar o modulo ${moduleName}: $($_.Exception.Message)"
-        Write-Host $errorMessage -ForegroundColor Red
-        Log-Error $errorMessage
+        Show-Message $errorMessage -Type "Error"
     }
 }
 
@@ -97,7 +114,7 @@ function Show-WelcomeScreen {
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host "                                         " -ForegroundColor Green
     Write-Host "              JORNADA365                  " -ForegroundColor Green
-    Write-Host "            Sua Jornada Comeca Aqui       " -ForegroundColor Green
+    Write-Host "            Sua Jornada Comenca Aqui      " -ForegroundColor Green
     Write-Host "                                         " -ForegroundColor Green
     Write-Host "===========================================" -ForegroundColor Green
     Write-Host "                                         " -ForegroundColor Yellow
@@ -124,33 +141,32 @@ function Connect-MicrosoftGraph {
 
     while (-not $connected -and $retryCount -lt $maxRetries) {
         try {
-            Write-Host "Conectando ao Microsoft Graph..." -ForegroundColor Cyan
+            Show-Message "Conectando ao Microsoft Graph..." -Type "Info"
             Connect-MgGraph -Scopes "Directory.ReadWrite.All", "User.ReadWrite.All", "Group.ReadWrite.All", "Sites.ReadWrite.All", "DeviceManagementManagedDevices.ReadWrite.All", "Reports.Read.All", "Mail.ReadWrite"
-            Write-Host "Conectado ao Microsoft Graph." -ForegroundColor Green
+            Show-Message "Conectado ao Microsoft Graph." -Type "Info"
             $connected = $true
         } catch {
             $retryCount++
             $errorMessage = "Erro de autenticacao: $($_.Exception.Message). Tentativa $retryCount de $maxRetries."
-            Write-Host $errorMessage -ForegroundColor Red
-            Log-Error $errorMessage
+            Show-Message $errorMessage -Type "Error"
             Start-Sleep -Seconds 10
         }
     }
 
     if (-not $connected) {
-        Write-Host "Falha ao conectar ao Microsoft Graph apos $maxRetries tentativas." -ForegroundColor Red
+        Show-Message "Falha ao conectar ao Microsoft Graph apos $maxRetries tentativas." -Type "Error"
         exit
     }
 }
 
 # Desconectar do Microsoft Graph
 function Disconnect-Services {
-    Write-Host "Desconectando do Microsoft Graph..." -ForegroundColor Cyan
+    Show-Message "Desconectando do Microsoft Graph..." -Type "Info"
     try {
         Disconnect-MgGraph -ErrorAction Stop
-        Write-Host "Desconectado do Microsoft Graph." -ForegroundColor Green
+        Show-Message "Desconectado do Microsoft Graph." -Type "Info"
     } catch {
-        Write-Host "Nenhuma aplicacao para desconectar." -ForegroundColor Yellow
+        Show-Message "Nenhuma aplicacao para desconectar." -Type "Info"
     }
 }
 
@@ -169,8 +185,7 @@ function Get-FriendlySkuNames {
         }
     } catch {
         $errorMessage = "Erro ao obter nomes amigaveis de SKU: $($_.Exception.Message)"
-        Write-Host $errorMessage -ForegroundColor Red
-        Log-Error $errorMessage
+        Show-Message $errorMessage -Type "Error"
     }
     return $skuNames
 }
@@ -210,7 +225,7 @@ function Import-UsersFromCsv {
         }
         return $csvData
     } else {
-        Write-Host "Nenhum arquivo selecionado." -ForegroundColor Red
+        Show-Message "Nenhum arquivo selecionado." -Type "Error"
         return $null
     }
 }
@@ -227,8 +242,7 @@ function Check-Set-UserLocation {
     foreach ($User in $Users) {
         if (-not $User.UserPrincipalName) {
             $notificationMessage = "Usuario nao possui um UPN valido. Pulando usuario."
-            Write-Host $notificationMessage -ForegroundColor Yellow
-            Log-Error $notificationMessage
+            Show-Message $notificationMessage -Type "Attention"
             continue
         }
 
@@ -238,11 +252,10 @@ function Check-Set-UserLocation {
             if (-not $UserData.UsageLocation) {
                 Set-MgUser -UserId $User.UserPrincipalName.Trim() -UsageLocation $location
                 $LocationStatus = "Localidade definida para $location"
-                Write-Host "OK - " -ForegroundColor Green -NoNewline
-                Write-Host "$LocationStatus para $($UserData.DisplayName)" -ForegroundColor Green
+                Show-Message "$LocationStatus para $($UserData.DisplayName)" -Type "Info"
             } else {
                 $LocationStatus = "Localidade ja definida ($($UserData.UsageLocation))"
-                Write-Host "$LocationStatus para $($UserData.DisplayName)" -ForegroundColor Yellow
+                Show-Message "$LocationStatus para $($UserData.DisplayName)" -Type "Info"
             }
             $LocationReport.Add([PSCustomObject]@{
                 Numero = $i
@@ -254,12 +267,10 @@ function Check-Set-UserLocation {
         } catch {
             if ($_.Exception.ErrorCode -eq "Request_ResourceNotFound") {
                 $notificationMessage = "Usuario ${User.UserPrincipalName} nao existe ou foi excluido."
-                Write-Host $notificationMessage -ForegroundColor Yellow
-                Log-Error $notificationMessage
+                Show-Message $notificationMessage -Type "Attention"
             } else {
                 $errorMessage = "Erro ao definir localidade do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                Write-Host $errorMessage -ForegroundColor Red
-                Log-Error $errorMessage
+                Show-Message $errorMessage -Type "Error"
             }
         }
     }
@@ -280,28 +291,26 @@ function Assign-Licenses {
     foreach ($User in $Users) {
         if (-not $User.UserPrincipalName) {
             $notificationMessage = "Usuario nao possui um UPN valido. Pulando usuario."
-            Write-Host $notificationMessage -ForegroundColor Yellow
-            Log-Error $notificationMessage
+            Show-Message $notificationMessage -Type "Attention"
             continue
         }
 
-        $ErrorMsg = $Null; $i++
-        Write-Host ("Processando conta de $i/$($Users.Count)") -ForegroundColor Cyan
+        $AttentionMsg = $Null; $i++
+        Show-Message ("Processando conta de $i/$($Users.Count)") -Type "Info"
         try {
             $UserData = Get-MgUser -UserId $User.UserPrincipalName.Trim() -Property id, assignedLicenses, department, displayName, usageLocation -ErrorAction Stop
             if (-not $UserData.UsageLocation) {
-                Write-Host "Localidade nao definida para $($UserData.DisplayName). Definindo localidade padrao..." -ForegroundColor Yellow
+                Show-Message "Localidade nao definida para $($UserData.DisplayName). Definindo localidade padrao..." -Type "Info"
                 Set-MgUser -UserId $User.UserPrincipalName.Trim() -UsageLocation $defaultLocation
             }
             $DisplayName = $UserData.DisplayName
         } catch {
             if ($_.Exception.ErrorCode -eq "Request_ResourceNotFound") {
                 $notificationMessage = "Usuario ${User.UserPrincipalName} nao existe ou foi excluido."
-                Write-Host $notificationMessage -ForegroundColor Yellow
-                Log-Error $notificationMessage
+                Show-Message $notificationMessage -Type "Attention"
             } else {
-                $ErrorMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                Write-Host $ErrorMsg -ForegroundColor Red
+                $AttentionMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                Show-Message $AttentionMsg -Type "Error"
                 $AssignmentReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $User.DisplayName
@@ -309,9 +318,8 @@ function Assign-Licenses {
                     Departamento                = $User.Department
                     Licenca                     = $friendlySkuNames[$skuId]
                     "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                    Erro                        = $ErrorMsg
+                    Erro                        = $AttentionMsg
                 })
-                Log-Error $ErrorMsg
             }
             continue
         }
@@ -320,7 +328,7 @@ function Assign-Licenses {
             $LicenseData = $UserData | Select-Object -ExpandProperty AssignedLicenses
             if ($skuId -in $LicenseData.SkuId) {
                 $StatusMsg = "Licenca ja atribuida a conta de usuario ${User.UserPrincipalName}"
-                Write-Host $StatusMsg -ForegroundColor Yellow
+                Show-Message $StatusMsg -Type "Info"
                 $AssignmentReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $DisplayName
@@ -334,8 +342,7 @@ function Assign-Licenses {
                 try {
                     Set-MgUserLicense -UserId $User.UserPrincipalName -Addlicenses @{SkuId = $skuId} -RemoveLicenses @() -ErrorAction Stop
                     $StatusMsg = "Licenca atribuida $($friendlySkuNames[$skuId]) - $($DisplayName)"
-                    Write-Host "OK - " -ForegroundColor Green -NoNewline
-                    Write-Host $StatusMsg -ForegroundColor Green
+                    Show-Message $StatusMsg -Type "Info"
                     $AssignmentReport.Add([PSCustomObject]@{
                         Numero                      = $i
                         Nome                        = $DisplayName
@@ -347,8 +354,8 @@ function Assign-Licenses {
                     })
                 } catch {
                     if ($_.Exception.ErrorCode -eq "Request_BadRequest" -and $_.Exception.Message -match "does not have any available licenses") {
-                        $ErrorMsg = "A subscricao com SKU $skuId nao possui licencas disponiveis."
-                        Write-Host $ErrorMsg -ForegroundColor Yellow
+                        $InfoMsg = "Nao ha licencas disponiveis para atribuir a conta de usuario ${User.UserPrincipalName}."
+                        Show-Message $InfoMsg -Type "Attention"
                         $AssignmentReport.Add([PSCustomObject]@{
                             Numero                      = $i
                             Nome                        = $DisplayName
@@ -356,11 +363,23 @@ function Assign-Licenses {
                             Departamento                = $User.Department
                             Licenca                     = $friendlySkuNames[$skuId]
                             "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                            Status                      = $ErrorMsg
+                            Status                      = $InfoMsg
+                        })
+                    } elseif ($_.Exception.Message -match "mutually exclusive") {
+                        $InfoMsg = "Nao foi possivel atribuir a licenca ao usuario ${User.UserPrincipalName} pois ha conflito entre planos de servico."
+                        Show-Message $InfoMsg -Type "Attention"
+                        $AssignmentReport.Add([PSCustomObject]@{
+                            Numero                      = $i
+                            Nome                        = $DisplayName
+                            UPN                         = $User.UserPrincipalName
+                            Departamento                = $User.Department
+                            Licenca                     = $friendlySkuNames[$skuId]
+                            "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
+                            Status                      = $InfoMsg
                         })
                     } else {
-                        $ErrorMsg = "Erro ao atribuir licenca ao usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                        Write-Host $ErrorMsg -ForegroundColor Red
+                        $AttentionMsg = "Nao foi possivel atribuir a licenca ao usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                        Show-Message $AttentionMsg -Type "Error"
                         $AssignmentReport.Add([PSCustomObject]@{
                             Numero                      = $i
                             Nome                        = $DisplayName
@@ -368,9 +387,8 @@ function Assign-Licenses {
                             Departamento                = $User.Department
                             Licenca                     = $friendlySkuNames[$skuId]
                             "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                            Erro                        = $ErrorMsg
+                            Erro                        = $AttentionMsg
                         })
-                        Log-Error $ErrorMsg
                     }
                 }
             }
@@ -391,24 +409,22 @@ function Remove-Licenses {
     foreach ($User in $Users) {
         if (-not $User.UserPrincipalName) {
             $notificationMessage = "Usuario nao possui um UPN valido. Pulando usuario."
-            Write-Host $notificationMessage -ForegroundColor Yellow
-            Log-Error $notificationMessage
+            Show-Message $notificationMessage -Type "Attention"
             continue
         }
 
-        $ErrorMsg = $Null; $i++
-        Write-Host ("Processando conta de $i/$($Users.Count)") -ForegroundColor Cyan
+        $AttentionMsg = $Null; $i++
+        Show-Message ("Processando conta de $i/$($Users.Count)") -Type "Info"
         try {
             $UserData = Get-MgUser -UserId $User.UserPrincipalName.Trim() -Property id, assignedLicenses, department, displayName -ErrorAction Stop
             $DisplayName = $UserData.DisplayName
         } catch {
             if ($_.Exception.ErrorCode -eq "Request_ResourceNotFound") {
                 $notificationMessage = "Usuario ${User.UserPrincipalName} nao existe ou foi excluido."
-                Write-Host $notificationMessage -ForegroundColor Yellow
-                Log-Error $notificationMessage
+                Show-Message $notificationMessage -Type "Attention"
             } else {
-                $ErrorMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                Write-Host $ErrorMsg -ForegroundColor Red
+                $AttentionMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                Show-Message $AttentionMsg -Type "Error"
                 $RemovalReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $User.DisplayName
@@ -416,9 +432,8 @@ function Remove-Licenses {
                     Departamento                = $User.Department
                     Licenca                     = $friendlySkuNames[$skuId]
                     "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                    Erro                        = $ErrorMsg
+                    Erro                        = $AttentionMsg
                 })
-                Log-Error $ErrorMsg
             }
             continue
         }
@@ -429,8 +444,7 @@ function Remove-Licenses {
                 try {
                     Set-MgUserLicense -UserId $User.UserPrincipalName -Addlicenses @() -RemoveLicenses @($skuId) -ErrorAction Stop
                     $StatusMsg = "Licenca removida $($friendlySkuNames[$skuId]) - $($DisplayName)"
-                    Write-Host "OK - " -ForegroundColor Green -NoNewline
-                    Write-Host $StatusMsg -ForegroundColor Green
+                    Show-Message $StatusMsg -Type "Info"
                     $RemovalReport.Add([PSCustomObject]@{
                         Numero                      = $i
                         Nome                        = $DisplayName
@@ -441,8 +455,8 @@ function Remove-Licenses {
                         Status                      = $StatusMsg
                     })
                 } catch {
-                    $ErrorMsg = "Erro ao remover licenca do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                    Write-Host $ErrorMsg -ForegroundColor Red
+                    $AttentionMsg = "Nao foi possivel remover a licenca do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                    Show-Message $AttentionMsg -Type "Error"
                     $RemovalReport.Add([PSCustomObject]@{
                         Numero                      = $i
                         Nome                        = $DisplayName
@@ -450,13 +464,12 @@ function Remove-Licenses {
                         Departamento                = $User.Department
                         Licenca                     = $friendlySkuNames[$skuId]
                         "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                        Erro                        = $ErrorMsg
+                        Erro                        = $AttentionMsg
                     })
-                    Log-Error $ErrorMsg
                 }
             } else {
                 $StatusMsg = "Licenca nao atribuida a conta de usuario ${User.UserPrincipalName}"
-                Write-Host $StatusMsg -ForegroundColor Yellow
+                Show-Message $StatusMsg -Type "Info"
                 $RemovalReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $DisplayName
@@ -482,24 +495,22 @@ function Remove-AllLicenses {
     foreach ($User in $Users) {
         if (-not $User.UserPrincipalName) {
             $notificationMessage = "Usuario nao possui um UPN valido. Pulando usuario."
-            Write-Host $notificationMessage -ForegroundColor Yellow
-            Log-Error $notificationMessage
+            Show-Message $notificationMessage -Type "Attention"
             continue
         }
 
-        $ErrorMsg = $Null; $i++
-        Write-Host ("Processando conta de $i/$($Users.Count)") -ForegroundColor Cyan
+        $AttentionMsg = $Null; $i++
+        Show-Message ("Processando conta de $i/$($Users.Count)") -Type "Info"
         try {
             $UserData = Get-MgUser -UserId $User.UserPrincipalName.Trim() -Property id, assignedLicenses, department, displayName -ErrorAction Stop
             $DisplayName = $UserData.DisplayName
         } catch {
             if ($_.Exception.ErrorCode -eq "Request_ResourceNotFound") {
                 $notificationMessage = "Usuario ${User.UserPrincipalName} nao existe ou foi excluido."
-                Write-Host $notificationMessage -ForegroundColor Yellow
-                Log-Error $notificationMessage
+                Show-Message $notificationMessage -Type "Attention"
             } else {
-                $ErrorMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                Write-Host $ErrorMsg -ForegroundColor Red
+                $AttentionMsg = "Erro ao buscar dados do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                Show-Message $AttentionMsg -Type "Error"
                 $RemovalReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $User.DisplayName
@@ -507,9 +518,8 @@ function Remove-AllLicenses {
                     Departamento                = $User.Department
                     Licenca                     = "Todas"
                     "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                    Erro                        = $ErrorMsg
+                    Erro                        = $AttentionMsg
                 })
-                Log-Error $ErrorMsg
             }
             continue
         }
@@ -519,8 +529,7 @@ function Remove-AllLicenses {
             try {
                 Set-MgUserLicense -UserId $User.UserPrincipalName -Addlicenses @() -RemoveLicenses ($LicenseData | ForEach-Object { $_.SkuId }) -ErrorAction Stop
                 $StatusMsg = "Todas as licencas removidas - $($DisplayName)"
-                Write-Host "OK - " -ForegroundColor Green -NoNewline
-                Write-Host $StatusMsg -ForegroundColor Green
+                Show-Message $StatusMsg -Type "Info"
                 $RemovalReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $DisplayName
@@ -531,8 +540,8 @@ function Remove-AllLicenses {
                     Status                      = $StatusMsg
                 })
             } catch {
-                $ErrorMsg = "Erro ao remover todas as licencas do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
-                Write-Host $ErrorMsg -ForegroundColor Red
+                $AttentionMsg = "Nao foi possivel remover todas as licencas do usuario ${User.UserPrincipalName}: $($_.Exception.Message)"
+                Show-Message $AttentionMsg -Type "Error"
                 $RemovalReport.Add([PSCustomObject]@{
                     Numero                      = $i
                     Nome                        = $DisplayName
@@ -540,13 +549,12 @@ function Remove-AllLicenses {
                     Departamento                = $User.Department
                     Licenca                     = "Todas"
                     "Data/Hora da execucao"     = (Get-Date -format "dd/MM/yyyy HH:mm:ss")
-                    Erro                        = $ErrorMsg
+                    Erro                        = $AttentionMsg
                 })
-                Log-Error $ErrorMsg
             }
         } else {
             $StatusMsg = "Nenhuma licenca atribuida a conta de usuario ${User.UserPrincipalName}"
-            Write-Host $StatusMsg -ForegroundColor Yellow
+            Show-Message $StatusMsg -Type "Info"
             $RemovalReport.Add([PSCustomObject]@{
                 Numero                      = $i
                 Nome                        = $DisplayName
@@ -601,7 +609,7 @@ function Main {
     try {
         Connect-MicrosoftGraph
     } catch {
-        Write-Host "Erro ao conectar aos servicos. Saindo..." -ForegroundColor Red
+        Show-Message "Erro ao conectar aos servicos. Saindo..." -Type "Error"
         exit
     }
 
@@ -611,11 +619,11 @@ function Main {
 
             switch ($choice) {
                 1 {
-                    Write-Host "Adicionar Licencas"
+                    Show-Message "Adicionar Licencas" -Type "Info"
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
+                        Show-Message "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -Type "Info"
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -628,11 +636,11 @@ function Main {
                     }
                 }
                 2 {
-                    Write-Host "Adicionar e Remover Licencas"
+                    Show-Message "Adicionar e Remover Licencas" -Type "Info"
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
+                        Show-Message "Selecione a(s) licenca(s) a ser(em) atribuida(s) (digite os numeros separados por espacos):" -Type "Info"
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -642,7 +650,7 @@ function Main {
                         $selectedAddSkus = $selectedAddSkuIndexes | ForEach-Object { $skus[$_ - 1].SkuId }
 
                         Write-Host ""
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):" -ForegroundColor Red
+                        Show-Message "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):" -Type "Info"
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -657,11 +665,11 @@ function Main {
                     }
                 }
                 3 {
-                    Write-Host "Remover Licencas"
+                    Show-Message "Remover Licencas" -Type "Info"
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $skus = Get-AvailableSkus
-                        Write-Host "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):" -ForegroundColor Yellow
+                        Show-Message "Selecione a(s) licenca(s) a ser(em) removida(s) (digite os numeros separados por espacos):" -Type "Info"
                         $i = 1
                         foreach ($sku in $skus) {
                             Write-Host "$i. $($sku.SkuPartNumber) - Disponivel: $($sku.Disponivel)"
@@ -673,44 +681,44 @@ function Main {
                     }
                 }
                 4 {
-                    Write-Host "Remover Todas as Licencas"
+                    Show-Message "Remover Todas as Licencas" -Type "Info"
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $report = Remove-AllLicenses -users $users
                     }
                 }
                 5 {
-                    Write-Host "Definir Localidade Padrao para Todos os Usuarios"
+                    Show-Message "Definir Localidade Padrao para Todos os Usuarios" -Type "Info"
                     $defaultLocation = Select-Location
                     if ($defaultLocation) {
                         $users = Get-MgUser -All
                         if ($users) {
                             $report = Check-Set-UserLocation -users $users -location $defaultLocation
                         } else {
-                            Write-Host "Nenhum usuario encontrado." -ForegroundColor Red
+                            Show-Message "Nenhum usuario encontrado." -Type "Error"
                         }
                     } else {
-                        Write-Host "Nenhuma localidade selecionada. Operacao cancelada." -ForegroundColor Red
+                        Show-Message "Nenhuma localidade selecionada. Operacao cancelada." -Type "Error"
                     }
                 }
                 6 {
-                    Write-Host "Importar CSV e Definir Localidade"
+                    Show-Message "Importar CSV e Definir Localidade" -Type "Info"
                     $users = Import-UsersFromCsv
                     if ($users) {
                         $defaultLocation = Select-Location
                         if ($defaultLocation) {
                             $report = Check-Set-UserLocation -users $users -location $defaultLocation
                         } else {
-                            Write-Host "Nenhuma localidade selecionada. Operacao cancelada." -ForegroundColor Red
+                            Show-Message "Nenhuma localidade selecionada. Operacao cancelada." -Type "Error"
                         }
                     }
                 }
                 0 {
-                    Write-Host "Saindo..."
+                    Show-Message "Saindo..." -Type "Info"
                     break
                 }
                 default {
-                    Write-Host "Opcao invalida. Tente novamente." -ForegroundColor Red
+                    Show-Message "Opcao invalida. Tente novamente." -Type "Error"
                 }
             }
         }
